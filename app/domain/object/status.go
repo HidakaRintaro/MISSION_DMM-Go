@@ -6,7 +6,9 @@ type (
 		ID int64 `json:"id"`
 
 		// The accountId of the status
-		AccountID AccountID `json:"account_id,omitempty" db:"account_id"`
+		AccountID AccountID `json:"-" db:"account_id"`
+
+		Account Account `json:"account,omitempty"`
 
 		// The content of the status
 		Content *string `json:"content,omitempty"`
