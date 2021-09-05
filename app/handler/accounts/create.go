@@ -2,7 +2,6 @@ package accounts
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -59,7 +58,6 @@ func (h *handler) GetAccount(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	username := chi.URLParam(r, "username")
-	fmt.Println("username:", username)
 
 	a := h.app.Dao.Account()
 	account, err := a.FindByUsername(ctx, username)
