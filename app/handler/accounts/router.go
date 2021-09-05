@@ -18,6 +18,7 @@ func NewRouter(app *app.App) http.Handler {
 	r := chi.NewRouter()
 
 	h := &handler{app: app}
+	r.Get("/{username}", h.GetAccount)
 	r.Post("/", h.Create)
 
 	return r
