@@ -2,7 +2,10 @@ package accounts
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+
+	"github.com/go-chi/chi"
 
 	"yatter-backend-go/app/domain/object"
 	"yatter-backend-go/app/handler/httperror"
@@ -39,6 +42,27 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	account, err = a.FindById(ctx, id)
+	if err != nil {
+		httperror.InternalServerError(w, err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(account); err != nil {
+		httperror.InternalServerError(w, err)
+		return
+	}
+}
+
+// Handler request for `GET /v1/accounts/{username}`
+func (h *handler) GetAccount(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	username := chi.URLParam(r, "username")
+	fmt.Println("username:", username)
+
+	a := h.app.Dao.Account()
+	account, err := a.FindByUsername(ctx, username)
 	if err != nil {
 		httperror.InternalServerError(w, err)
 		return
