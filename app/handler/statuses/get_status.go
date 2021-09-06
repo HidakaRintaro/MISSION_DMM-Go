@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
+// Handler request for `GET /v1/statuses/{id}`
 func (h *handler) GetStatus(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
