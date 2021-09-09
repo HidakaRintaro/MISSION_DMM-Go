@@ -63,3 +63,31 @@ func (r *status) FindById(ctx context.Context, id int64) (*object.Status, error)
 
 	return entity, nil
 }
+
+func (r *status) DeleteById(_ context.Context, id int64) error {
+	stmt, err := r.db.Preparex("delete from status where id = ?")
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if closeErr := stmt.Close(); closeErr != nil {
+			err = closeErr
+		}
+	}()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	// TODO 削除できるものがない時のエラーハンドリングをする
+	//row, err := result.RowsAffected()
+	//if err != nil {
+	//	return err
+	//}
+	//if row == 0 {
+	//	return errors.New("here were no status that could be deleted")
+	//}
+
+	return nil
+}
