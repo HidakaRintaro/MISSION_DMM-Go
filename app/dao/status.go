@@ -81,13 +81,14 @@ func (r *status) DeleteById(_ context.Context, id int64) error {
 	}
 
 	// TODO 削除できるものがない時のエラーハンドリングをする
-	//row, err := result.RowsAffected()
-	//if err != nil {
+	// そもそも削除できなかったらDBのエラーになる？？
+	// row, err := result.RowsAffected()
+	// if err != nil {
 	//	return err
-	//}
-	//if row == 0 {
+	// }
+	// if row == 0 {
 	//	return errors.New("here were no status that could be deleted")
-	//}
+	// }
 
 	return nil
 }
