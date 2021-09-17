@@ -28,6 +28,10 @@ func (h *handler) GetStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	a := h.app.Dao.Account()
+	account, err := a.FindById(ctx, status.AccountID)
+	status.Account = *account
+
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(status); err != nil {
 		httperror.InternalServerError(w, err)
