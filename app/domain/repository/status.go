@@ -12,4 +12,6 @@ type Status interface {
 	FindById(ctx context.Context, id int64) (*object.Status, error)
 	// Delete status which has specified id
 	DeleteById(ctx context.Context, id int64) error
+
+	FindByQuery(ctx context.Context, queryParameter map[string][]string) ([]object.Status, error)
 }
