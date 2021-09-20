@@ -94,28 +94,15 @@ func (r *status) DeleteById(_ context.Context, id int64) error {
 }
 
 // FindByQuery : クエリパラメータに一致するstatusを取得(TimeLine)
-func (r *status) FindByQuery(ctx context.Context, _ map[string][]string) ([]object.Status, error) {
-	entity := []object.Status{}
-	err := r.db.SelectContext(ctx, &entity, `
-		select 
-			s.id as id,
-			s.content as content,
-			s.create_at as create_at,
-			a.username as username, 
-			a.display_name as display_name,
-			a.create_at as account_create_at,
-			a.note as note,
-			a.avatar as avatar,
-			a.header as header
-		from status s 
-		left join account a on a.id = s.account_id`)
-	fmt.Println("router=========================")
+func (r *status) FindByQuery(ctx context.Context, _ map[string][]string) ([]*object.Status, error) {
+	entity := []*object.Status{}
+	err := r.db.SelectContext(ctx, &entity, "select * from status")
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
-
 		return nil, fmt.Errorf("%w", err)
 	}
+
 	return entity, nil
 }

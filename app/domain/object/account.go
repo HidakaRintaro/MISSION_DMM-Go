@@ -35,7 +35,7 @@ type (
 		Note *string `json:"note,omitempty"`
 
 		// The time the account was created
-		CreateAt DateTime `json:"create_at,omitempty" db:"create_at,account_create_at"`
+		CreateAt DateTime `json:"create_at,omitempty" db:"create_at"`
 	}
 )
 
