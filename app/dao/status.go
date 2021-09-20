@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
+	"strings"
 	"yatter-backend-go/app/domain/object"
 	"yatter-backend-go/app/domain/repository"
 
@@ -94,9 +96,41 @@ func (r *status) DeleteById(_ context.Context, id int64) error {
 }
 
 // FindByQuery : クエリパラメータに一致するstatusを取得(TimeLine)
-func (r *status) FindByQuery(ctx context.Context, _ map[string][]string) ([]*object.Status, error) {
+func (r *status) FindByQuery(ctx context.Context, qp map[string][]string) ([]*object.Status, error) {
 	entity := []*object.Status{}
-	err := r.db.SelectContext(ctx, &entity, "select * from status")
+	query := "select * from status"
+	var args []interface{}
+	var WhereAry []string
+
+	// WHERE句の作成
+	switch {
+	case len(qp["max_id"]) != 0:
+		WhereAry = append(WhereAry, "id < ?")
+		args = append(args, qp["max_id"][0])
+	case len(qp["since_id"]) != 0:
+		WhereAry = append(WhereAry, "id > ?")
+		args = append(args, qp["since_id"][0])
+	}
+	if len(WhereAry) != 0 {
+		query += " where " + strings.Join(WhereAry, " and ")
+	}
+
+	strLimit := "40"
+	if len(qp["limit"]) != 0 {
+		strLimit = qp["limit"][0]
+	}
+	limit, err := strconv.Atoi(strLimit)
+	if err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
+	args = append(args, limit)
+	query += " limit ?"
+
+	if limit > 80 {
+		return nil, fmt.Errorf("limit is up to 80")
+	}
+
+	err = r.db.SelectContext(ctx, &entity, query, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
