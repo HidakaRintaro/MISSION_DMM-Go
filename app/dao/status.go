@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 	"yatter-backend-go/app/domain/object"
 	"yatter-backend-go/app/domain/repository"
 
@@ -91,4 +92,37 @@ func (r *status) DeleteById(_ context.Context, id int64) error {
 	// }
 
 	return nil
+}
+
+// FindByQuery : クエリパラメータに一致するstatusを取得(TimeLine)
+func (r *status) FindByQuery(ctx context.Context, qp map[string]int) ([]*object.Status, error) {
+	entity := []*object.Status{}
+	query := "select * from status"
+	var args []interface{}
+	var WhereAry []string
+
+	if len(qp) > 1 {
+		if v, ok := qp["max_id"]; ok {
+			WhereAry = append(WhereAry, "id < ?")
+			args = append(args, v)
+		}
+		if v, ok := qp["since_id"]; ok {
+			WhereAry = append(WhereAry, "id > ?")
+			args = append(args, v)
+		}
+		query += " where " + strings.Join(WhereAry, " and ")
+	}
+
+	args = append(args, qp["limit"])
+	query += " limit ?"
+	fmt.Println(query)
+	err := r.db.SelectContext(ctx, &entity, query, args...)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("%w", err)
+	}
+
+	return entity, nil
 }
