@@ -115,7 +115,7 @@ func (r *status) FindByQuery(ctx context.Context, qp map[string]int) ([]*object.
 
 	args = append(args, qp["limit"])
 	query += " limit ?"
-	fmt.Println(query)
+
 	err := r.db.SelectContext(ctx, &entity, query, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
