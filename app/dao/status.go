@@ -45,7 +45,6 @@ func (r *status) CreateStatus(_ context.Context, accountId int64, content string
 	if err != nil {
 		return 0, err
 	}
-	return id, nil
 
 	return id, nil
 }
